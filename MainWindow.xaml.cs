@@ -11,6 +11,8 @@
 // Matthew Yorke             | 07/31/2019 | Initial client is made without any databased information. There are still
 //                           |            | many implementation features to add, but basic sending and receiving (on
 //                           |            | a local host) are available.
+// Matthew Yorke             | 08/02/2019 | Allow user the enter the host address and port number. Prevent users from
+//                           |            | sending blank messages. Spelling fixes.
 //
 //*********************************************************************************************************************
 
@@ -73,24 +75,37 @@ namespace ChatClient
       //***************************************************************************************************************
       private void LoginButtonCallback(object theSender, RoutedEventArgs theEventArguments)
       {
-         mServerConnection = new ServerConnection();
-
-         bool connectionSuccesful = mServerConnection.OpenConnection();
-
-         if (connectionSuccesful == true)
+         if (this.ServerAddress.Text == "")
          {
-            mConnected = true;
-            mMessageThread = new Thread(MessageRecieveThread);
-            mMessageThread.Start();
-
-            this.LoginButton.IsEnabled = false;
-            this.LogoutButton.IsEnabled = true;
-            this.UserMessage.IsEnabled = true;
-            this.SendMessageButton.IsEnabled = true;
+            MessageBox.Show("The hostname has not been entered.", "Alert", MessageBoxButton.OK, MessageBoxImage.Information);
+         }
+         else if (this.PortNumber.Text == "")
+         {
+            MessageBox.Show("The port number has not been entered.", "Alert", MessageBoxButton.OK, MessageBoxImage.Information);
          }
          else
          {
-            MessageBox.Show("Failed to connect to the server.", "Alert", MessageBoxButton.OK, MessageBoxImage.Information);
+            mServerConnection = new ServerConnection();
+
+            bool connectionSuccesful = mServerConnection.OpenConnection(this.ServerAddress.Text, int.Parse(this.PortNumber.Text));
+
+            if (connectionSuccesful == true)
+            {
+               mConnected = true;
+               mMessageThread = new Thread(MessageReceiveThread);
+               mMessageThread.Start();
+
+               this.ServerAddress.IsEnabled = false;
+               this.PortNumber.IsEnabled = false;
+               this.LoginButton.IsEnabled = false;
+               this.LogoutButton.IsEnabled = true;
+               this.UserMessage.IsEnabled = true;
+               this.SendMessageButton.IsEnabled = true;
+            }
+            else
+            {
+               MessageBox.Show("Failed to connect to the server.", "Alert", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
          }
       }
 
@@ -118,6 +133,8 @@ namespace ChatClient
          mMessageThread.Join();
          mServerConnection.CloseConnection();
          
+         this.ServerAddress.IsEnabled = true;
+         this.PortNumber.IsEnabled = true;
          this.LoginButton.IsEnabled = true;
          this.LogoutButton.IsEnabled = false;
          this.UserMessage.IsEnabled = false;
@@ -145,9 +162,12 @@ namespace ChatClient
       //***************************************************************************************************************
       private void SendMessageButtonCallback(object theSender, RoutedEventArgs theEventArguments)
       {
-         String message = this.UserMessage.Text;
-         this.UserMessage.Text = "";
-         mServerConnection.WriteMessage(message);
+         if(this.UserMessage.Text != "")
+         {
+            String message = this.UserMessage.Text;
+            this.UserMessage.Text = "";
+            mServerConnection.WriteMessage(message);
+         }
       }
 
       //***************************************************************************************************************
@@ -179,7 +199,7 @@ namespace ChatClient
 
       //***************************************************************************************************************
       //
-      // Method: MessageRecieveThread
+      // Method: MessageReceiveThread
       //
       // Description:
       //    While there is still a connection to the server, continuously check for any messages being received from
@@ -192,13 +212,16 @@ namespace ChatClient
       //    N/A
       //
       //***************************************************************************************************************
-      private void MessageRecieveThread()
+      private void MessageReceiveThread()
       {
          while (mConnected == true)
          {
-            String recievedMessage = mServerConnection.RecieveMessage();
+            String receivedMessage = mServerConnection.ReceiveMessage();
 
-            this.Dispatcher.Invoke(() => {AppendMessageToChat(recievedMessage + "\r\n");});
+            if (String.IsNullOrWhiteSpace(receivedMessage) == false)
+            {
+               this.Dispatcher.Invoke(() => {AppendMessageToChat(receivedMessage + "\r\n");});
+            }
          }
       }
 

@@ -17,9 +17,13 @@
              <!--The Left Panel-->
             <StackPanel Margin="5 0 5 0"
                         Grid.Column="0">
-                <!--The Login Section-->
-                <GroupBox Header="Login">
+                <!--The Connection Section-->
+                <GroupBox Header="Connection">
                     <StackPanel>
+                        <TextBlock Text="Hostname/IP Address:" />
+                        <TextBox Name="ServerAddress" />
+                        <TextBlock Text="Port Number:" />
+                        <TextBox Name="PortNumber" />
                         <TextBlock Text="Username:" />
                         <TextBox Name="UserNameTextBox"/>
                         <TextBlock Text="Password:" />

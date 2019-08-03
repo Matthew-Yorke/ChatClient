@@ -11,6 +11,9 @@
 // Matthew Yorke             | 07/31/2019 | This is the initial setup for the server with some functionality missing
 //                           |            | or not complete. It has the basic ability to connect and disconnect as well
 //                           |            | as send and receive messages.
+// Matthew Yorke             | 08/02/2019 | Allow user the enter the host address and port number. Fixed bug where a
+//                           |            | thread blocks on read due to no data coming in, preventing users from
+//                           |            | logging out. Spelling Fixes.
 //
 //*********************************************************************************************************************
 
@@ -59,12 +62,12 @@ namespace ChatClient
       //    N/A
       //
       //***************************************************************************************************************
-      public bool OpenConnection()
+      public bool OpenConnection(String theServerAddress, int thePortNumber)
       {
          mClientSocket = new System.Net.Sockets.TcpClient();
          try
          {
-            mClientSocket.Connect("192.168.56.1", 54000);
+            mClientSocket.Connect(theServerAddress, thePortNumber);
          }
          catch (SocketException e)
          {
@@ -149,7 +152,7 @@ namespace ChatClient
 
       //***************************************************************************************************************
       //
-      // Method: RecieveMessage
+      // Method: ReceiveMessage
       //
       // Description:
       //    Waits for the server to send any message to the client and converts the byte representation into a string.
@@ -161,20 +164,24 @@ namespace ChatClient
       //    N/A
       //
       //***************************************************************************************************************
-      public String RecieveMessage()
+      public String ReceiveMessage()
       {
-         String recievedMessage = "";
+         String receivedMessage = "";
          byte[] resp = new byte[8192];
          NetworkStream serverStream = mClientSocket.GetStream();
+         
+         // Make sure there is data available so the read function doesn't become blocked forever.
+         if (serverStream.DataAvailable == true)
+         {
+            // Retrieve a message from the server as a representation in bytes as well as the number of bytes that were
+            //  read
+            int bytesRead = serverStream.Read(resp, 0, resp.Length);
 
-         // Retrieve a message from the server as a representation in bytes as well as the number of bytes that were
-         //  read
-         int bytesRead = serverStream.Read(resp, 0, resp.Length);
+            // Convert the byte representation of the message into a string and remove any remaining null terminators.
+            receivedMessage = Encoding.ASCII.GetString(resp, 0, bytesRead).Trim('\0');
+         }
 
-         // Convert the byte representation of the message into a string and remove any remaining null terminators.
-         recievedMessage = Encoding.ASCII.GetString(resp, 0, bytesRead).Trim('\0');
-
-         return recievedMessage;
+         return receivedMessage;
       }
    }
 }
