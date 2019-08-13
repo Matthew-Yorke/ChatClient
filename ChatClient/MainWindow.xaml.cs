@@ -20,17 +20,62 @@ using System;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
+using System.ComponentModel;
 
 namespace ChatClient
 {
-   public partial class MainWindow : Window
+   public partial class MainWindow : INotifyPropertyChanged
    {
+      public event PropertyChangedEventHandler PropertyChanged;
+
+      private void NotifyPropertyChanged(string propertyName)
+      {
+         if (PropertyChanged != null)
+         {
+            PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+         }
+      }
+
       // The server connection object that handles the connection, disconnect, and sending of messages to the server.
       private ServerConnection mServerConnection;
       // The thread that handles receiving of messages from the server.
       private Thread mMessageThread;
       // A boolean to track when the client is and isn't connected to the server.
       private bool mConnected;
+      // The member variable to hold the updated username typed by the user.
+      private string mPrivateUsername;
+      public string mPublicUsername
+      {
+         get
+         {
+            return mPrivateUsername;
+         }
+         set
+         {
+            if (mPrivateUsername != value)
+            {
+               mPrivateUsername = value;
+               NotifyPropertyChanged("mPublicUsername");
+            }
+         }
+      }
+      // The member variable to hold the updated username typed by the user.
+      public string mPrivatePassword;
+      public string mPublicPassword
+      {
+         get
+         {
+            return mPrivatePassword;
+         }
+         set
+         {
+            if (mPrivatePassword != value)
+            {
+               mPrivatePassword = value;
+               NotifyPropertyChanged("mPublicPassword");
+            }
+         }
+      }
 
       //***************************************************************************************************************
       //
@@ -52,6 +97,7 @@ namespace ChatClient
          mMessageThread = null;
          mConnected = false;
          InitializeComponent();
+         DataContext = this;
       }
 
       //***************************************************************************************************************
@@ -91,20 +137,34 @@ namespace ChatClient
 
             if (connectionSuccesful == true)
             {
-               mConnected = true;
-               mMessageThread = new Thread(MessageReceiveThread);
-               mMessageThread.Start();
+               mServerConnection.SendMessageType("connection");
+               String conenctionParameters = mPrivateUsername + "," + mPrivatePassword;
+               mServerConnection.WriteMessage(conenctionParameters);
+               String reply = mServerConnection.ReceiveMessage();
 
-               this.ServerAddress.IsEnabled = false;
-               this.PortNumber.IsEnabled = false;
-               this.LoginButton.IsEnabled = false;
-               this.LogoutButton.IsEnabled = true;
-               this.UserMessage.IsEnabled = true;
-               this.SendMessageButton.IsEnabled = true;
+               if (reply == "ACK")
+               { 
+                  mConnected = true;
+                  mMessageThread = new Thread(MessageReceiveThread);
+                  mMessageThread.Start();
+
+                  this.ServerAddress.IsEnabled = false;
+                  this.PortNumber.IsEnabled = false;
+                  this.LoginButton.IsEnabled = false;
+                  this.LogoutButton.IsEnabled = true;
+                  this.UserMessage.IsEnabled = true;
+                  this.SendMessageButton.IsEnabled = true;
+               }
+               else
+               {
+                  connectionSuccesful = false;
+                  mServerConnection = null;
+                  MessageBox.Show("Username or password are invalid.", "Alert", MessageBoxButton.OK, MessageBoxImage.Error);
+               }
             }
             else
             {
-               MessageBox.Show("Failed to connect to the server.", "Alert", MessageBoxButton.OK, MessageBoxImage.Information);
+               MessageBox.Show("Failed to connect to the server.", "Alert", MessageBoxButton.OK, MessageBoxImage.Error);
             }
          }
       }
@@ -166,6 +226,7 @@ namespace ChatClient
          {
             String message = this.UserMessage.Text;
             this.UserMessage.Text = "";
+            mServerConnection.WriteMessage("message");
             mServerConnection.WriteMessage(message);
          }
       }

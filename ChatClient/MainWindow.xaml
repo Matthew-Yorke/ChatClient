@@ -25,9 +25,11 @@
                         <TextBlock Text="Port Number:" />
                         <TextBox Name="PortNumber" />
                         <TextBlock Text="Username:" />
-                        <TextBox Name="UserNameTextBox"/>
+                        <TextBox Name="UserNameTextBox"
+                                 Text="{Binding Path=mPublicUsername, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         <TextBlock Text="Password:" />
-                        <TextBox Name="UserPasswordTextBox"/>
+                        <TextBox Name="UserPasswordTextBox"
+                                 Text="{Binding Path=mPublicPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                         <Button Margin="0 5 0 5"
                                 Content="Login"
                                 Name="LoginButton"

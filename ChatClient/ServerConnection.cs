@@ -98,6 +98,36 @@ namespace ChatClient
 
       //***************************************************************************************************************
       //
+      // Method: SendMessageType
+      //
+      // Description:
+      //    Send message type to server so it knows what kind of message it is receiving.
+      //
+      // Arguments:
+      //    theMessageType
+      //
+      // Return:
+      //    N/A
+      //
+      //***************************************************************************************************************
+      public void SendMessageType(String theMessageType)
+      {
+         // The packet of correct size to be sent to the connected server.
+         byte[] messagePacket = new byte[8192];
+         // Stream to write to the connected server.
+         NetworkStream serverStream = mClientSocket.GetStream();
+
+         byte[] messageTypeInBytes = Encoding.ASCII.GetBytes(theMessageType);
+         for (int i = 0; i < messageTypeInBytes.Length; ++i)
+         {
+            messagePacket[i] = messageTypeInBytes[i];
+         }
+         serverStream.Write(messagePacket, 0, 8192);
+         serverStream.Flush();
+      }
+
+      //***************************************************************************************************************
+      //
       // Method: WriteMessage
       //
       // Description:
@@ -118,23 +148,6 @@ namespace ChatClient
          // Stream to write to the connected server.
          NetworkStream serverStream = mClientSocket.GetStream();
 
-         //************************************************************************************************************
-         // Start - Send message type to server so it knows what kind of message it is receiving.
-         //************************************************************************************************************
-         byte[] messageTypeInBytes = Encoding.ASCII.GetBytes("message");
-         for (int i = 0; i < messageTypeInBytes.Length; ++i)
-         {
-            messagePacket[i] = messageTypeInBytes[i];
-         }
-         serverStream.Write(messagePacket, 0, 8192);
-         serverStream.Flush();
-         //************************************************************************************************************
-         // End - Send message type to server so it knows what kind of message it is receiving.
-         //************************************************************************************************************
-
-         //************************************************************************************************************
-         // Start - Send the actual message to the server.
-         //************************************************************************************************************
          // Retrieve the entire message in a byte array..
          byte[] messageInBytes = Encoding.ASCII.GetBytes(message);
 
@@ -165,9 +178,6 @@ namespace ChatClient
             // Increment to the next packet number to be made.
             packetCount++;
          }
-         //************************************************************************************************************
-         // End - Send the actual message to the server.
-         //************************************************************************************************************
       }
 
       //***************************************************************************************************************

@@ -12,3 +12,17 @@ C:\Users\Yorke\source\repos\ChatClient\ChatClient\obj\x86\Release\ChatClient.csp
 C:\Users\Yorke\source\repos\ChatClient\ChatClient\obj\x86\Release\ChatClient.csproj.CoreCompileInputs.cache
 C:\Users\Yorke\source\repos\ChatClient\ChatClient\obj\x86\Release\ChatClient.exe
 C:\Users\Yorke\source\repos\ChatClient\ChatClient\obj\x86\Release\ChatClient.pdb
+C:\Users\Yorke\source\repos\ChatClient\ChatClient\ChatClient\bin\x86\Release\ChatClient.exe.config
+C:\Users\Yorke\source\repos\ChatClient\ChatClient\ChatClient\bin\x86\Release\ChatClient.exe
+C:\Users\Yorke\source\repos\ChatClient\ChatClient\ChatClient\bin\x86\Release\ChatClient.pdb
+C:\Users\Yorke\source\repos\ChatClient\ChatClient\ChatClient\obj\x86\Release\MainWindow.g.cs
+C:\Users\Yorke\source\repos\ChatClient\ChatClient\ChatClient\obj\x86\Release\App.g.cs
+C:\Users\Yorke\source\repos\ChatClient\ChatClient\ChatClient\obj\x86\Release\ChatClient_MarkupCompile.cache
+C:\Users\Yorke\source\repos\ChatClient\ChatClient\ChatClient\obj\x86\Release\ChatClient_MarkupCompile.lref
+C:\Users\Yorke\source\repos\ChatClient\ChatClient\ChatClient\obj\x86\Release\MainWindow.baml
+C:\Users\Yorke\source\repos\ChatClient\ChatClient\ChatClient\obj\x86\Release\ChatClient.g.resources
+C:\Users\Yorke\source\repos\ChatClient\ChatClient\ChatClient\obj\x86\Release\ChatClient.Properties.Resources.resources
+C:\Users\Yorke\source\repos\ChatClient\ChatClient\ChatClient\obj\x86\Release\ChatClient.csproj.GenerateResource.cache
+C:\Users\Yorke\source\repos\ChatClient\ChatClient\ChatClient\obj\x86\Release\ChatClient.csproj.CoreCompileInputs.cache
+C:\Users\Yorke\source\repos\ChatClient\ChatClient\ChatClient\obj\x86\Release\ChatClient.exe
+C:\Users\Yorke\source\repos\ChatClient\ChatClient\ChatClient\obj\x86\Release\ChatClient.pdb
