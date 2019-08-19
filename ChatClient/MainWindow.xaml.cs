@@ -24,17 +24,9 @@ using System.ComponentModel;
 
 namespace ChatClient
 {
-   public partial class MainWindow : INotifyPropertyChanged
+   public partial class MainWindow
    {
-      public event PropertyChangedEventHandler PropertyChanged;
-
-      private void NotifyPropertyChanged(string propertyName)
-      {
-         if (PropertyChanged != null)
-         {
-            PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-         }
-      }
+      private readonly MainWindowModel mModel = new MainWindowModel();
 
       // The server connection object that handles the connection, disconnect, and sending of messages to the server.
       private ServerConnection mServerConnection;
@@ -42,40 +34,6 @@ namespace ChatClient
       private Thread mMessageThread;
       // A boolean to track when the client is and isn't connected to the server.
       private bool mConnected;
-      // The member variable to hold the updated username typed by the user.
-      private string mPrivateUsername;
-      public string mPublicUsername
-      {
-         get
-         {
-            return mPrivateUsername;
-         }
-         set
-         {
-            if (mPrivateUsername != value)
-            {
-               mPrivateUsername = value;
-               NotifyPropertyChanged("mPublicUsername");
-            }
-         }
-      }
-      // The member variable to hold the updated username typed by the user.
-      public string mPrivatePassword;
-      public string mPublicPassword
-      {
-         get
-         {
-            return mPrivatePassword;
-         }
-         set
-         {
-            if (mPrivatePassword != value)
-            {
-               mPrivatePassword = value;
-               NotifyPropertyChanged("mPublicPassword");
-            }
-         }
-      }
 
       //***************************************************************************************************************
       //
@@ -97,7 +55,7 @@ namespace ChatClient
          mMessageThread = null;
          mConnected = false;
          InitializeComponent();
-         DataContext = this;
+         DataContext = mModel;
       }
 
       //***************************************************************************************************************
@@ -121,11 +79,11 @@ namespace ChatClient
       //***************************************************************************************************************
       private void LoginButtonCallback(object theSender, RoutedEventArgs theEventArguments)
       {
-         if (this.ServerAddress.Text == "")
+         if (mModel.mServerAddress == "")
          {
             MessageBox.Show("The hostname has not been entered.", "Alert", MessageBoxButton.OK, MessageBoxImage.Information);
          }
-         else if (this.PortNumber.Text == "")
+         else if (mModel.mPortNumber == "")
          {
             MessageBox.Show("The port number has not been entered.", "Alert", MessageBoxButton.OK, MessageBoxImage.Information);
          }
@@ -133,12 +91,12 @@ namespace ChatClient
          {
             mServerConnection = new ServerConnection();
 
-            bool connectionSuccesful = mServerConnection.OpenConnection(this.ServerAddress.Text, int.Parse(this.PortNumber.Text));
+            bool connectionSuccesful = mServerConnection.OpenConnection(mModel.mServerAddress, int.Parse(mModel.mPortNumber));
 
             if (connectionSuccesful == true)
             {
                mServerConnection.SendMessageType("connection");
-               String conenctionParameters = mPrivateUsername + "," + mPrivatePassword;
+               String conenctionParameters = mModel.mUsername + "," + mModel.mPassword;
                mServerConnection.WriteMessage(conenctionParameters);
                String reply = mServerConnection.ReceiveMessage();
 
@@ -222,12 +180,11 @@ namespace ChatClient
       //***************************************************************************************************************
       private void SendMessageButtonCallback(object theSender, RoutedEventArgs theEventArguments)
       {
-         if(this.UserMessage.Text != "")
+         if(mModel.mUserMessage != "")
          {
-            String message = this.UserMessage.Text;
-            this.UserMessage.Text = "";
             mServerConnection.WriteMessage("message");
-            mServerConnection.WriteMessage(message);
+            mServerConnection.WriteMessage(mModel.mUserMessage);
+            mModel.mUserMessage = "";
          }
       }
 

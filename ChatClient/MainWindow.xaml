@@ -21,15 +21,17 @@
                 <GroupBox Header="Connection">
                     <StackPanel>
                         <TextBlock Text="Hostname/IP Address:" />
-                        <TextBox Name="ServerAddress" />
+                        <TextBox Name="ServerAddress" 
+                                 Text="{Binding Path=mServerAddress, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}" />
                         <TextBlock Text="Port Number:" />
-                        <TextBox Name="PortNumber" />
+                        <TextBox Name="PortNumber"
+                                 Text="{Binding Path=mPortNumber, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}" />
                         <TextBlock Text="Username:" />
                         <TextBox Name="UserNameTextBox"
-                                 Text="{Binding Path=mPublicUsername, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                 Text="{Binding Path=mUsername, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}" />
                         <TextBlock Text="Password:" />
                         <TextBox Name="UserPasswordTextBox"
-                                 Text="{Binding Path=mPublicPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                 Text="{Binding Path=mPassword, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}" />
                         <Button Margin="0 5 0 5"
                                 Content="Login"
                                 Name="LoginButton"
@@ -73,7 +75,7 @@
                              IsEnabled="False"
                              Name="UserMessage"
                              KeyDown="UserMessageKeyPressed"
-                             Text="{Binding Source=UserMessage, Path=mUserMessage, Mode=OneWay}" />
+                             Text="{Binding Path=mUserMessage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     <Button VerticalAlignment="Center"
                             Grid.Column="1"
                             IsEnabled="False"
