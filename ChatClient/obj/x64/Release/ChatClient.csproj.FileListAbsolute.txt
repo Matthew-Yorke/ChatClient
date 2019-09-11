@@ -26,4 +26,3 @@ C:\Users\Yorke\source\repos\ChatClient\ChatClient\ChatClient\obj\x64\Release\Cha
 C:\Users\Yorke\source\repos\ChatClient\ChatClient\ChatClient\obj\x64\Release\ChatClient.csproj.CoreCompileInputs.cache
 C:\Users\Yorke\source\repos\ChatClient\ChatClient\ChatClient\obj\x64\Release\ChatClient.exe
 C:\Users\Yorke\source\repos\ChatClient\ChatClient\ChatClient\obj\x64\Release\ChatClient.pdb
-C:\Users\Yorke\source\repos\ChatClient\ChatClient\ChatClient\obj\x64\Release\ChatClient.csprojAssemblyReference.cache

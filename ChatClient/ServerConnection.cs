@@ -20,6 +20,7 @@
 using System;
 using System.Text;
 using System.Net.Sockets;
+using System.Diagnostics;
 
 namespace ChatClient
 {
@@ -196,20 +197,36 @@ namespace ChatClient
       //***************************************************************************************************************
       public String ReceiveMessage()
       {
+         // Used for the timeout
+         Stopwatch timeout = new Stopwatch();
+         // Used to determine if the server message has been received.
+         bool haveReceivedMessage = false;
+         // The message string received from the server.
          String receivedMessage = "";
+         // The byte array of the message received from the server.
          byte[] resp = new byte[8192];
+         // Used to check the socket stream for messages.
          NetworkStream serverStream = mClientSocket.GetStream();
-         
-         // Make sure there is data available so the read function doesn't become blocked forever.
-         if (serverStream.DataAvailable == true)
-         {
-            // Retrieve a message from the server as a representation in bytes as well as the number of bytes that were
-            //  read
-            int bytesRead = serverStream.Read(resp, 0, resp.Length);
 
-            // Convert the byte representation of the message into a string and remove any remaining null terminators.
-            receivedMessage = Encoding.ASCII.GetString(resp, 0, bytesRead).Trim('\0');
+         timeout.Start();
+         // May take a moment for data to come in but also have a timeout timer for waiting.
+         while (haveReceivedMessage == false && timeout.ElapsedMilliseconds < 1000)
+         {
+            // Make sure there is data available so the read function doesn't become blocked forever.
+            if (serverStream.DataAvailable == true)
+            {
+               // Retrieve a message from the server as a representation in bytes as well as the number of bytes that were
+               //  read
+               int bytesRead = serverStream.Read(resp, 0, resp.Length);
+
+               // Convert the byte representation of the message into a string and remove any remaining null terminators.
+               receivedMessage = Encoding.ASCII.GetString(resp, 0, bytesRead).Trim('\0');
+
+               // Mark the message has now been received.
+               haveReceivedMessage = true;
+            }
          }
+         timeout.Stop();
 
          return receivedMessage;
       }
